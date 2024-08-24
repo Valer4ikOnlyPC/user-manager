@@ -70,3 +70,6 @@ test-phpcs: up ## Execute phpcs tests with ARGS=""
 fix-phpcs: up ## Execute phpcs tests with ARGS=""
 	$(docker_compose_bin) exec -u $(shell id -u) "$(PHP_CLI_CONTAINER_NAME)" composer fix:phpcs -- $(ARGS)
 
+migrate:
+	$(docker_compose_bin) exec -T -u $(shell id -u) "$(PHP_CLI_CONTAINER_NAME)" ./user-manager/apps/main/bin/console doctrine:migrations:migrate
+
