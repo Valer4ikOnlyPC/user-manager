@@ -1,0 +1,6 @@
+doctrine:
+  dbal:
+    default_connection: ~
+    connections:
+      user_manager:
+        charset: CP1251

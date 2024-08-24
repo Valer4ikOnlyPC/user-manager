@@ -1,0 +1,8 @@
+/bin/*
+/vendor/*
+/dbdata/*
+/user-manager/user-manager/apps/main/cache/*
+/user-manager/user-manager/apps/main/logs/*
+/user-manager/user-manager/.env
+/user-manager/.env
+.env

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<routes xmlns="http://symfony.com/schema/routing"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://symfony.com/schema/routing
+        https://symfony.com/schema/routing/routing-1.0.xsd">
+    <route id="v1:user:list" path="/api/v1/user/list" methods="POST">
+        <default key="_service">UserManager\Core\Context\Application\Service\User\GetUsersService\GetUsersService</default>
+        <default key="_request">UserManager\Core\Context\Application\Service\User\GetUsersService\API\Request\ApiGetUsersRequest</default>
+    </route>
+    <route id="v1:user:delete" path="/api/v1/user/delete" methods="POST">
+        <default key="_service">UserManager\Core\Context\Application\Service\User\DeleteUserService\DeleteUserService</default>
+        <default key="_request">UserManager\Core\Context\Application\Service\User\DeleteUserService\API\Request\ApiDeleteUserRequest</default>
+    </route>
+    <route id="v1:user:update" path="/api/v1/user/update" methods="POST">
+        <default key="_service">UserManager\Core\Context\Application\Service\User\UpdateUserService\UpdateUserService</default>
+        <default key="_request">UserManager\Core\Context\Application\Service\User\UpdateUserService\API\Request\ApiUpdateUserRequest</default>
+    </route>
+    <route id="v1:login" path="/api/v1/login" methods="POST">
+        <default key="_service">UserManager\Core\Context\Application\Service\Security\ApiAuthenticationService\ApiAuthenticationService</default>
+        <default key="_request">UserManager\Core\Context\Application\Service\Security\ApiAuthenticationService\Request\ApiAuthenticationRequest</default>
+    </route>
+    <route id="v1:create-account" path="/api/v1/create-account" methods="POST">
+        <default key="_service">UserManager\Core\Context\Application\Service\Security\ApiCreateAccountService\ApiCreateAccountService</default>
+        <default key="_request">UserManager\Core\Context\Application\Service\Security\ApiCreateAccountService\Request\ApiCreateAccountRequest</default>
+    </route>
+</routes>

@@ -1,0 +1,15 @@
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services
+           https://symfony.com/schema/dic/services/services-1.0.xsd">
+    <parameters>
+        <parameter key="env.user_manager.db_database" type="constant">ENV_CORE_DB_DATABASE</parameter>
+        <parameter key="env.user_manager.db_user" type="constant">ENV_CORE_DB_USER</parameter>
+        <parameter key="env.user_manager.db_password" type="constant">ENV_CORE_DB_PASSWORD</parameter>
+        <parameter key="env.user_manager.db_host" type="constant">ENV_CORE_DB_HOST</parameter>
+        <parameter key="env.user_manager.db_port" type="constant">ENV_CORE_DB_PORT</parameter>
+        <parameter key="env.user_manager.db_driver" type="constant">ENV_CORE_DB_DRIVER</parameter>
+        <parameter key="env.user_manager.db_server_version" type="constant">ENV_CORE_DB_SERVER_VERSION</parameter>
+        <parameter key="env.user_manager.security.secret_token" type="constant">ENV_CORE_SECRET_WEB_TOKEN</parameter>
+    </parameters>
+</container>

@@ -1,0 +1,77 @@
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services
+           https://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service id="user_manager.domain.security.user_checker"
+                 class="UserManager\Core\Context\Domain\Model\Security\Authentication\UserChecker\UserChecker"
+                 autowire="false"
+                 public="false">
+        </service>
+        <service id="user_manager.domain.security.web_token.web_token_encoder"
+                 class="UserManager\Core\Context\Domain\Model\Security\Authentication\Token\WebToken\WebTokenEncoder"
+                 autowire="false"
+                 public="false">
+        </service>
+        <service id="user_manager.domain.security.web_token.hash_web_token_generator"
+                 class="UserManager\Core\Context\Domain\Model\Security\Authentication\Token\WebToken\HashWebTokenGenerator"
+                 autowire="false"
+                 public="true">
+            <argument type="string">%env.user_manager.security.secret_token%</argument>
+        </service>
+        <service id="user_manager.domain.security.web_token.web_token_builder"
+                 class="UserManager\Core\Context\Domain\Model\Security\Authentication\Token\WebToken\WebTokenBuilder"
+                 autowire="false"
+                 public="false">
+            <argument type="service"
+                      id="user_manager.domain.security.web_token.web_token_encoder"/>
+            <argument type="service"
+                      id="user_manager.domain.security.web_token.hash_web_token_generator"/>
+        </service>
+        <service id="user_manager.domain.security.token_authenticator"
+                 class="UserManager\Core\Context\Domain\Service\Security\Authenticator\TokenAuthenticator"
+                 autowire="false"
+                 public="false">
+            <argument type="service"
+                      id="user_manager.domain.security.web_token.web_token_encoder"/>
+            <argument type="service"
+                      id="user_manager.domain.security.web_token.hash_web_token_generator"/>
+            <argument type="service"
+                      id="user_manager.doctrine.repository.user"/>
+            <argument type="service"
+                      id="user_manager.domain.security.user_checker"/>
+        </service>
+        <service id="user_manager.domain.security.login_authenticator"
+                 class="UserManager\Core\Context\Domain\Service\Security\Authenticator\LoginAuthenticator"
+                 autowire="false"
+                 public="false">
+            <argument type="service"
+                      id="user_manager.doctrine.repository.user"/>
+            <argument type="service"
+                      id="user_manager.domain.security.user_checker"/>
+        </service>
+        <service id="user_manager.domain.security.authentication"
+                 class="UserManager\Core\Context\Domain\Service\Security\Authentication\AuthenticationService">
+            <argument type="collection">
+                <argument type="service"
+                          id="user_manager.domain.security.login_authenticator"/>
+                <argument type="service"
+                          id="user_manager.domain.security.token_authenticator"/>
+            </argument>
+        </service>
+        <service id="UserManager\Core\Context\Application\Service\Security\ApiAuthenticationService\ApiAuthenticationService"
+                 class="UserManager\Core\Context\Application\Service\Security\ApiAuthenticationService\ApiAuthenticationService">
+            <argument type="service"
+                      id="user_manager.domain.security.login_authenticator"/>
+            <argument type="service"
+                      id="user_manager.domain.security.web_token.web_token_builder"/>
+        </service>
+        <service id="UserManager\Core\Context\Application\Service\Security\ApiCreateAccountService\ApiCreateAccountService"
+                 class="UserManager\Core\Context\Application\Service\Security\ApiCreateAccountService\ApiCreateAccountService">
+            <argument type="service"
+                      id="user_manager.doctrine.repository.user"/>
+            <argument type="service"
+                      id="user_manager.domain.security.web_token.web_token_builder"/>
+        </service>
+    </services>
+</container>

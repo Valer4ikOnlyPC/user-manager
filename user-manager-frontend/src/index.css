@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.blur {
+  --tw-blur: blur(1px);
+  backdrop-filter: blur(1px);
+}
+
+.autofill-bg:-webkit-autofill,
+.autofill-bg:-webkit-autofill:hover,
+.autofill-bg:-webkit-autofill:focus,
+.autofill-bg:-webkit-autofill:active {
+  box-shadow: 0 0 0 30px #ffffff inset !important;
+}

@@ -1,0 +1,31 @@
+#!/usr/bin/env php
+<?php
+
+use UserManager\Apps\Main\Kernel;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Debug\Debug;
+
+if (!in_array(PHP_SAPI, ['cli', 'phpdbg', 'embed'], true)) {
+    echo 'Warning: The console should be invoked via the CLI version of PHP, not the '.PHP_SAPI.' SAPI'.PHP_EOL;
+}
+
+set_time_limit(0);
+
+require dirname(__DIR__).'/../../../vendor/autoload.php';
+
+require dirname(__DIR__).'/../bootstrap.php';
+
+/** @noinspection DuplicatedCode */
+$input = new ArgvInput();
+$env = $input->getParameterOption(['--env', '-e'], $_SERVER['APP_ENV']);
+$debug = $_SERVER['APP_DEBUG'];
+
+if ($debug) {
+    Debug::enable();
+}
+
+$kernel = new Kernel($env, $debug);
+$application = new Application($kernel);
+/** @noinspection PhpUnhandledExceptionInspection */
+$application->run($input);

@@ -1,0 +1,92 @@
+version: '3.9'
+
+volumes:
+  phpsocket:
+
+services:
+  nginx:
+    env_file:
+      - .env
+    restart: unless-stopped
+    container_name: "nginx_${CONTAINER_NAME_SUFFIX:-user-manager}"
+    build:
+      context: ./src
+      dockerfile: DockerfileNginx
+    volumes:
+      - "${PASSWD_FILE:-/etc/passwd}:/etc/passwd:ro"
+      - "${GROUP_FILE:-/etc/group}:/etc/group:ro"
+      - "phpsocket:/usr/local/var/run:rw"
+      - .:/usr/data/www/onno:rw
+      - ./docker/etc/web/conf.d:/etc/nginx/conf.d
+    environment:
+      NGINX_USER_ID: "${USER_ID:-1000}"
+      NGINX_GROUP_ID: "${GROUP_ID:-1000}"
+      NGINX_VHOST_ROOT: "/usr/data/www/onno/www"
+    ports:
+      - "${WEB_SERVER_PORT:-8080}:80"
+
+  php-cli:
+    env_file:
+      - .env.default
+      - .env
+    restart: unless-stopped
+    build:
+      context: ./src
+      dockerfile: Dockerfile
+    container_name: "php-cli_${CONTAINER_NAME_SUFFIX:-user-manager}"
+    working_dir: /usr/data/www/onno
+    volumes:
+      - .:/usr/data/www/onno:rw
+      - ./docker/cron/crontab:/etc/periodic/crontab:rw
+    environment:
+      PHP_CLI_USER_ID: "${USER_ID:-1000}"
+      PHP_CLI_GROUP_ID: "${GROUP_ID:-1000}"
+      PHP_CLI_USER: "${USER_NAME:-Valer4ik}"
+    depends_on:
+      - mysql
+
+  php-fpm:
+    env_file:
+      - .env.default
+      - .env
+    restart: unless-stopped
+    build:
+      context: ./src
+      dockerfile: DockerfileFpm
+    container_name: "php-fpm_${CONTAINER_NAME_SUFFIX:-user-manager}"
+    working_dir: /usr/data/www/onno
+    volumes:
+      - "${PASSWD_FILE:-/etc/passwd}:/etc/passwd:ro"
+      - "${GROUP_FILE:-/etc/group}:/etc/group:ro"
+      - .:/usr/data/www/onno:rw
+      - "phpsocket:/usr/local/var/run"
+    environment:
+      PHP_FPM_USER_ID: "${USER_ID:-1000}"
+      PHP_FPM_GROUP_ID: "${GROUP_ID:-1000}"
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.0.32
+    command: --default-authentication-plugin=mysql_native_password
+    container_name: "mysql_${CONTAINER_NAME_SUFFIX:-user-manager}"
+    restart: always
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-secret}"
+      MYSQL_DATABASE: "${MYSQL_DATABASE:-onno}"
+      MYSQL_USER: "${MYSQL_USER:-onno}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD:-12345678}"
+    volumes:
+      - ./dbdata:/var/lib/mysql/
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: "phpmyadmin_${CONTAINER_NAME_SUFFIX:-user-manager}"
+    restart: always
+    ports:
+      - "${PHPMYADMIN_PORT:-8080}:80"
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-secret}"

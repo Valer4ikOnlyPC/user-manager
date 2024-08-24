@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                  https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="UserManager\Core\Context\Domain\Model\User\User"
+            table="users">
+        <id name="ID"
+            column="id"
+            type="UserID"/>
+        <field name="login"
+               column="login"/>
+        <field name="password"
+               column="password"/>
+        <field name="updateDate"
+               column="update_date"
+               type="datetime_immutable"/>
+        <field name="isAdmin"
+               column="is_admin"
+               type="boolean"/>
+        <embedded name="name"
+                  column-prefix="name_"
+                  class="UserManager\Core\Context\Domain\Model\User\UserName\UserName"/>
+    </entity>
+</doctrine-mapping>

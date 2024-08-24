@@ -1,0 +1,2 @@
+root:x:0:0:root:/root:/bin/bash
+<your_name>:x:<your_user_id>:<your_group_id>:<your_name>,,,:/home/<your_home>:/bin/bash
