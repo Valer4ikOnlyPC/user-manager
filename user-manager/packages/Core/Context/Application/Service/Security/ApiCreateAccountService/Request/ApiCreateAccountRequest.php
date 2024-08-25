@@ -31,19 +31,11 @@ class ApiCreateAccountRequest implements RequestInterface
      */
     private $name;
 
-    /**
-     * @var boolean
-     * @Serializer\Type("bool")
-     * @Serializer\SerializedName("is_admin")
-     */
-    private $isAdmin;
-
-    public function __construct(string $login, string $password, UserNameDTO $name, bool $isAdmin)
+    public function __construct(string $login, string $password, UserNameDTO $name)
     {
         $this->setLogin($login);
         $this->setPassword($password);
         $this->setName($name);
-        $this->setIsAdmin($isAdmin);
     }
 
     public function login(): string
@@ -74,15 +66,5 @@ class ApiCreateAccountRequest implements RequestInterface
     private function setName(UserNameDTO $name): void
     {
         $this->name = $name;
-    }
-
-    public function isAdmin(): bool
-    {
-        return $this->isAdmin;
-    }
-
-    private function setIsAdmin(bool $isAdmin): void
-    {
-        $this->isAdmin = $isAdmin;
     }
 }

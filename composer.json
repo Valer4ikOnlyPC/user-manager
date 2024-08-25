@@ -22,7 +22,7 @@
   "prefer-stable": true,
   "scripts": {
     "test:phpunit": [
-      "php vendor/bin/phpunit ./test"
+      "php bin/phpunit ./tests  --coverage-text=php://stdout"
     ],
     "test:phpcs": "bin/ecs check",
     "fix:phpcs": "bin/ecs check --fix",

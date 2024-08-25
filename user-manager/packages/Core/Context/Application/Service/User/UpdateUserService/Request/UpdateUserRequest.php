@@ -27,10 +27,18 @@ class UpdateUserRequest implements RequestInterface
      */
     private $name;
 
-    public function __construct(string $userID, UserNameDTO $userNameDTO)
+    /**
+     * @var boolean
+     * @Serializer\Type("boolean")
+     * @Serializer\SerializedName("is_admin")
+     */
+    private $isAdmin;
+
+    public function __construct(string $userID, UserNameDTO $userNameDTO, bool $isAdmin)
     {
         $this->setUserID($userID);
         $this->setName($userNameDTO);
+        $this->setIsAdmin($isAdmin);
     }
 
     public function userID(): UserID
@@ -51,5 +59,15 @@ class UpdateUserRequest implements RequestInterface
     private function setName(UserNameDTO $name): void
     {
         $this->name = $name;
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->isAdmin;
+    }
+
+    private function setIsAdmin(bool $isAdmin): void
+    {
+        $this->isAdmin = $isAdmin;
     }
 }

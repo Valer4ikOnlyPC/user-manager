@@ -10,6 +10,7 @@ use UserManager\Core\Context\Application\Service\RequestInterface;
 use UserManager\Core\Context\Application\Service\ResponseInterface;
 use UserManager\Core\Context\Application\Service\Security\ApiCreateAccountService\Request\ApiCreateAccountRequest;
 use UserManager\Core\Context\Application\Service\Security\ApiCreateAccountService\Response\ApiCreateAccountResponse;
+use UserManager\Core\Context\Application\Service\User\DTO\UserDTO;
 use UserManager\Core\Context\Domain\Model\Security\Authentication\Token\TokenBuilderInterface;
 use UserManager\Core\Context\Domain\Model\User\User;
 use UserManager\Core\Context\Domain\Model\User\UserID;
@@ -60,15 +61,14 @@ class ApiCreateAccountService extends ApplicationService
             new UserID(),
             $request->login(),
             password_hash($request->password(), PASSWORD_BCRYPT),
-            $request->isAdmin(),
             new UserName(
-                $request->name()->firstName(),//mb_convert_encoding($request->name()->firstName(), 'windows-1251', 'utf-8'),
-                $request->name()->secondName(),//mb_convert_encoding($request->name()->secondName(), 'windows-1251', 'utf-8'),
-                $request->name()->lastName()//mb_convert_encoding($request->name()->lastName(), 'windows-1251', 'utf-8')
+                $request->name()->firstName(),
+                $request->name()->secondName(),
+                $request->name()->lastName()
             )
         );
         $this->userRepository->add($user);
 
-        return new ApiCreateAccountResponse($this->tokenBuilder->createToken($user));
+        return new ApiCreateAccountResponse($this->tokenBuilder->createToken($user), new UserDTO($user));
     }
 }

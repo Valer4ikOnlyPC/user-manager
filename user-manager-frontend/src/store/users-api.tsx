@@ -53,13 +53,14 @@ export const usersApi = createApi({
             },
             invalidatesTags: [{type: 'Users', id: 'LIST'}]
         }),
-        updateUser: builder.mutation<any, { user_id: string, name: IUserName }>({
+        updateUser: builder.mutation<any, { user_id: string, name: IUserName, is_admin: boolean }>({
             query: (arg): any => ({
                 url: 'update',
                 method: 'POST',
                 body: {
                     "user_id": arg.user_id,
-                    "name": arg.name
+                    "name": arg.name,
+                    "is_admin": arg.is_admin
                 }
             }),
             transformErrorResponse: (baseQueryReturnValue: BaseQueryError<any>): string => {

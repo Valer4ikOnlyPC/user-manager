@@ -8,7 +8,6 @@ export function Login() {
     const [firstName, setFirstName] = useState<string>('');
     const [secondName, setSecondName] = useState<string>('');
     const [lastName, setLastName] = useState<string>('');
-    const [isAdmin, setIsAdmin] = useState<boolean>(false);
     const [password, setPassword] = useState<string>('');
     const [authentication, {isLoading, error}] = useAuthenticationMutation();
     const [createAccount, {isLoading: isCreating, error: createError}] = useCreateAccountMutation();
@@ -18,7 +17,7 @@ export function Login() {
             setShowError('')
             const response = isLogin ? await authentication({login, password}).unwrap() :
                 await createAccount({login: login, password: password, name:
-                        {first_name: firstName, second_name: secondName, last_name: lastName === '' ? null : lastName} as IUserName, is_admin: isAdmin }).unwrap();
+                        {first_name: firstName, second_name: secondName, last_name: lastName === '' ? null : lastName} as IUserName }).unwrap();
             const token = response.token;
             if (token) {
                 localStorage.setItem('user', JSON.stringify(response));
@@ -36,7 +35,11 @@ export function Login() {
     useEffect(() => {
         setAlert(!!(error || createError));
     }, [error, createError]);
-    const validation = (e: React.ChangeEvent<HTMLInputElement>): string => e.target.value.replace(/[^a-zA-Z-а-яА-Я .]/g, '');
+    const validation = (e: React.ChangeEvent<HTMLInputElement>): string => {
+        let text = e.target.value.replace(/[^a-zA-Z-а-яА-Я.]/g, '');
+        return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+    }
+    const validationLogin = (e: React.ChangeEvent<HTMLInputElement>): string => e.target.value.replace(/[^a-zA-Z-а-яА-Я-0-9-@-_.]/g, '');
 
     return (
         <>
@@ -57,7 +60,6 @@ export function Login() {
                                             className={"bg-white flex items-center text-black p-3 z-10 break-words rounded drop-shadow-lg sticky top-2 w-full transition-opacity " + (isAlert ? 'visible' : 'hidden')}>
                                             <div className={'w-full break-words'}>
                                                 {showError && <Error error={showError}/>}
-                                                {/*{createError && <Error error={JSON.stringify(createError)}/>}*/}
                                             </div>
                                             <div className={'px-3'}>
                                                 <button
@@ -80,7 +82,7 @@ export function Login() {
                                         <div className="mt-2">
                                             <input id="login" name="login" type="text" required value={login}
                                                    onChange={(e) => {
-                                                       setLogin(e.target.value)
+                                                       setLogin(validationLogin(e))
                                                    }}
                                                    className="block w-full rounded-md border-0 py-1.5 px-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
                                         </div>
@@ -125,7 +127,7 @@ export function Login() {
                                                            className="block w-full rounded-md border-0 py-1.5 px-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
                                                 </div>
                                             </div>
-                                            <div className={'mb-1 relative'}>
+                                            <div className={'mb-2 relative'}>
                                                 <label htmlFor="lastName"
                                                        className="block text-sm font-medium leading-6 text-gray-900 break-words">Отчество</label>
                                                 <div className="mt-2">
@@ -135,17 +137,6 @@ export function Login() {
                                                            }}
                                                            className="block w-full rounded-md border-0 py-1.5 px-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
                                                 </div>
-                                            </div>
-                                            <div className="relative flex items-start mb-5">
-                                                <div className="flex items-center h-5">
-                                                    <input id="remember" type="checkbox" value="" checked={isAdmin}
-                                                           onChange={(e) => {
-                                                               setIsAdmin(!isAdmin)
-                                                           }}
-                                                           className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300"/>
-                                                </div>
-                                                <label htmlFor="remember"
-                                                       className="ms-2 text-sm font-medium select-none text-gray-900">Администратор</label>
                                             </div>
                                         </>
                                     }

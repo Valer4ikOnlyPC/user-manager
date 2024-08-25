@@ -9,8 +9,10 @@ use UserManager\Core\Context\Application\Service\RequestInterface;
 use UserManager\Core\Context\Application\Service\ResponseInterface;
 use UserManager\Core\Context\Application\Service\Security\ApiAuthenticationService\Request\ApiAuthenticationRequest;
 use UserManager\Core\Context\Application\Service\Security\ApiAuthenticationService\Response\ApiAuthenticationResponse;
+use UserManager\Core\Context\Application\Service\User\DTO\UserDTO;
 use UserManager\Core\Context\Domain\Model\Security\Authentication\AuthenticatorInterface;
 use UserManager\Core\Context\Domain\Model\Security\Authentication\Token\TokenBuilderInterface;
+use UserManager\Core\Context\Domain\Model\User\User;
 
 /**
  * @method ApiAuthenticationResponse execute(ApiAuthenticationRequest $request);
@@ -47,8 +49,9 @@ class ApiAuthenticationService extends ApplicationService
      */
     protected function process(RequestInterface $request): ResponseInterface
     {
-        $response = $this->authenticator->authenticate($request);
+        /** @var User $user */
+        $user = ($this->authenticator->authenticate($request))->user();
 
-        return new ApiAuthenticationResponse($this->tokenBuilder->createToken($response->user()));
+        return new ApiAuthenticationResponse($this->tokenBuilder->createToken($user), new UserDTO($user));
     }
 }

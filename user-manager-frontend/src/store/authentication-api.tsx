@@ -1,10 +1,11 @@
 import {createApi} from "@reduxjs/toolkit/query/react";
 import {fetchBaseQuery} from "@reduxjs/toolkit/dist/query/react";
 import {BaseQueryError} from "@reduxjs/toolkit/dist/query/baseQueryTypes";
-import {IUserName} from "../models";
+import {IUser, IUserName} from "../models";
 
 export interface AuthenticationResponse {
-    token: string|null
+    token: string|null,
+    user: IUser
 }
 
 export const authenticationApi = createApi({
@@ -30,15 +31,14 @@ export const authenticationApi = createApi({
             },
             invalidatesTags: (result) => [{type: 'authentication', id: 'LIST'}]
         }),
-        createAccount: builder.mutation<AuthenticationResponse, { login: string, password: string, name: IUserName, is_admin: boolean }>({
+        createAccount: builder.mutation<AuthenticationResponse, { login: string, password: string, name: IUserName }>({
             query: (arg): any => ({
                 url: 'create-account',
                 method: 'POST',
                 body: {
                     "login": arg.login,
                     "password": arg.password,
-                    "name": arg.name,
-                    "is_admin": arg.is_admin
+                    "name": arg.name
                 }
             }),
             transformErrorResponse: (baseQueryReturnValue: BaseQueryError<any>): string => {

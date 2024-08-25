@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import {IUser, IUserName} from "../../models";
 import {useDeleteUserMutation, useUpdateUserMutation} from "../../store/users-api";
 import {Error} from "../Error";
+import {AuthenticationResponse} from "../../store/authentication-api";
 
 export interface UserItemPropertiesProps {
     user: IUser
@@ -19,11 +20,20 @@ export function UserItemProperties({user, deleteUser: deleteUserCallback, loadin
     const [firstName, setFirstName] = useState<string>(user.name.first_name)
     const [secondName, setSecondName] = useState<string>(user.name.second_name)
     const [lastName, setLastName] = useState<string>(user.name.last_name ? user.name.last_name : '')
+    const [isAdmin, setIsAdmin] = useState<boolean>(user.is_admin);
+    const [isAdminLoc, setIsAdminLoc] = useState(true);
 
     useEffect(() => {
         setFirstName(user.name.first_name)
         setSecondName(user.name.second_name)
         setLastName(user.name.last_name ? user.name.last_name : '')
+        setIsAdmin(user.is_admin)
+        const isAdminLocHandler = () => {
+            let thisUser = localStorage.getItem('user');
+            if (!thisUser) return;
+            setIsAdminLoc(!((JSON.parse(thisUser) as AuthenticationResponse).user.is_admin && (JSON.parse(thisUser) as AuthenticationResponse).user.id !== user.id));
+        }
+        isAdminLocHandler()
     }, [user]);
 
     useEffect(() => {
@@ -45,11 +55,15 @@ export function UserItemProperties({user, deleteUser: deleteUserCallback, loadin
             last_name: lastName === '' ? null : lastName,
         } as IUserName
 
-        updateUser({user_id: user.id, name: userName}).then((value) => {
+        updateUser({user_id: user.id, name: userName, is_admin: isAdmin}).then((value) => {
             if (value && value.hasOwnProperty('data')) {
                 setSuccessfully(true)
             }
         })
+    }
+
+    const isAdminHandler = () => {
+        if (!isAdminLoc) setIsAdmin(!isAdmin);
     }
 
     const deleteRuleHandler = () => {
@@ -73,7 +87,10 @@ export function UserItemProperties({user, deleteUser: deleteUserCallback, loadin
         setAlert(!!(isSuccessfully || error));
     }, [isSuccessfully, error]);
 
-    const validation = (e: React.ChangeEvent<HTMLInputElement>): string => e.target.value.replace(/[^a-zA-Z-а-яА-Я .]/g, '');
+    const validation = (e: React.ChangeEvent<HTMLInputElement>): string => {
+        let text = e.target.value.replace(/[^a-zA-Z-а-яА-Я.]/g, '');
+        return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+    }
 
     return (
         <div
@@ -169,6 +186,15 @@ export function UserItemProperties({user, deleteUser: deleteUserCallback, loadin
                     onChange={(e) => setLastName(validation(e))}
                     className="border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     id="lastName" type="text" placeholder="Отчетсво"/>
+            </div>
+            <div className="relative flex items-start mb-5">
+                <div className="flex items-center h-5">
+                    <input id="isAdmin" type="checkbox" value="" checked={isAdmin} disabled={isAdminLoc}
+                           onChange={isAdminHandler}
+                           className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300"/>
+                </div>
+                <label htmlFor="isAdmin"
+                       className="ms-2 text-sm font-medium select-none text-gray-900">Администратор</label>
             </div>
             <div className={'mt-2 relative mb-5 text-end text-gray-600'}>
                 <p>Дата обновления: <b>{(new Date(user.update_date)).toLocaleDateString()}</b></p>

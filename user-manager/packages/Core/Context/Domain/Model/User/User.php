@@ -44,8 +44,8 @@ class User implements ResourceInterface, UserInterface
         UserID $ID,
         string $login,
         string $password,
-        bool $isAdmin,
-        UserName $name
+        UserName $name,
+        bool $isAdmin = false
     ) {
         $this->setID($ID);
         $this->setLogin($login);
@@ -78,12 +78,6 @@ class User implements ResourceInterface, UserInterface
     public function password(): string
     {
         return $this->password;
-    }
-
-    public function updatePassword(string $password): void
-    {
-        $this->setPassword($password);
-        $this->setUpdateDate();
     }
 
     private function setPassword(string $password): void
@@ -127,8 +121,14 @@ class User implements ResourceInterface, UserInterface
         return $this->isAdmin;
     }
 
-    public function setIsAdmin(bool $isAdmin): void
+    private function setIsAdmin(bool $isAdmin): void
     {
         $this->isAdmin = $isAdmin;
+    }
+
+    public function updateIsAdmin(bool $isAdmin): void
+    {
+        $this->setIsAdmin($isAdmin);
+        $this->setUpdateDate();
     }
 }

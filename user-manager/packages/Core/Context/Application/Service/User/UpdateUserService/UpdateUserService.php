@@ -51,15 +51,15 @@ class UpdateUserService extends ApplicationService
      */
     protected function process(RequestInterface $request): ResponseInterface
     {
-        /** @var User|null $user */
-        $user = $this->security->user();
-        if ($user === null || (! $user->isAdmin() && ! $user->ID()->equals($request->userID()))) {
+        /** @var User|null $thisUser */
+        $thisUser = $this->security->user();
+        if ($thisUser === null || (! $thisUser->isAdmin() && ! $thisUser->ID()->equals($request->userID()))) {
             throw new AuthenticationException('Access denied.');
         }
 
         $user = $this->userRepository->findOrFail($request->userID());
         $this->em()->transactional(
-            function () use ($user, $request) {
+            function () use ($user, $thisUser, $request) {
                 $user->updateName(
                     new UserName(
                         mb_convert_encoding($request->name()->firstName(), 'windows-1251', 'utf-8'),
@@ -67,6 +67,9 @@ class UpdateUserService extends ApplicationService
                         mb_convert_encoding($request->name()->lastName(), 'windows-1251', 'utf-8')
                     )
                 );
+                if ($thisUser->isAdmin() && ! $thisUser->ID()->equals($request->userID())) {
+                    $user->updateIsAdmin($request->isAdmin());
+                }
             }
         );
 

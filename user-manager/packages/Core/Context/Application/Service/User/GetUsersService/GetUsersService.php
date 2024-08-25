@@ -52,7 +52,7 @@ class GetUsersService extends ApplicationService
         $users = [];
         $count = 0;
         if ($user !== null && $user->isAdmin()) {
-            $users = $this->userRepository->findByParameters(mb_convert_encoding($request->userName(), 'windows-1251', 'utf-8'))
+            $users = $this->userRepository->findByParameters($request->userName() !== null ? mb_convert_encoding($request->userName(), 'windows-1251', 'utf-8') : null)
                 ->setMaxPerPage($request->perPage())
                 ->setCurrentPage($request->page());
             $count = $users->count();
