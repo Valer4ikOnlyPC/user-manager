@@ -16,8 +16,5 @@ use UserManager\Core\Context\Domain\Model\RepositoryInterface;
  */
 interface UserRepositoryInterface extends RepositoryInterface
 {
-    /**
-     * @return Pager<User>
-     */
     public function findByParameters(?string $userName): Pager;
 }

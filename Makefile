@@ -4,20 +4,12 @@ SHELL = /bin/sh
 docker_bin := $(shell command -v docker 2> /dev/null)
 docker_compose_bin := $(shell command -v docker-compose 2> /dev/null)
 
-REGISTRY_HOST = registry.gitlab.com
 IMAGES_PREFIX := $(shell basename $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST)))))
 
 PHP_CLI_CONTAINER_NAME = php-cli
 
 docker_bin := $(shell command -v docker 2> /dev/null)
 docker_compose_bin := $(shell command -v docker-compose 2> /dev/null)
-
-ifeq "$(REGISTRY_HOST)" "registry.gitlab.com"
-	docker_login_hint ?= "\n\
-	**************************************************************************************\n\
-	* Make your own auth token here: <https://gitlab.com/profile/personal_access_tokens> *\n\
-	**************************************************************************************\n"
-endif
 
 .PHONY : help login test clean \
 		 test-phpstan test-phpunit \

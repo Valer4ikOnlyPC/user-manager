@@ -24,9 +24,6 @@ class DoctrineUserRepository extends DoctrineRepository implements UserRepositor
         return User::class;
     }
 
-    /**
-     * @return Pager<User>
-     */
     public function findByParameters(?string $userName): Pager
     {
         $query = $this->createQueryBuilder('u');

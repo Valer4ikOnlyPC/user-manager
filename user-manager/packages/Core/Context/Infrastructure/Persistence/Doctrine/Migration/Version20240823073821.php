@@ -15,7 +15,7 @@ class Version20240823073821 extends AbstractMigration
      * @param Schema $schema
      * @throws AbortMigrationException
      */
-    public function up(Schema $schema)
+    public function up(Schema $schema): void
     {
         $this->abortIf(
             $this->connection->getDatabasePlatform()
@@ -30,7 +30,7 @@ class Version20240823073821 extends AbstractMigration
      * @param Schema $schema
      * @throws AbortMigrationException
      */
-    public function down(Schema $schema)
+    public function down(Schema $schema): void
     {
         $this->abortIf(
             $this->connection->getDatabasePlatform()
