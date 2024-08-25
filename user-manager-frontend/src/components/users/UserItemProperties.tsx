@@ -1,8 +1,9 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {IUser, IUserName} from "../../models";
 import {useDeleteUserMutation, useUpdateUserMutation} from "../../store/users-api";
 import {Error} from "../Error";
 import {AuthenticationResponse} from "../../store/authentication-api";
+import AuthContext from "../../context/AuthContext";
 
 export interface UserItemPropertiesProps {
     user: IUser
@@ -66,9 +67,13 @@ export function UserItemProperties({user, deleteUser: deleteUserCallback, loadin
         if (!isAdminLoc) setIsAdmin(!isAdmin);
     }
 
+    const { currentUser, setCurrentUser } = useContext(AuthContext);
     const deleteRuleHandler = () => {
         setError('');
-        deleteUser(user.id)
+        deleteUser(user.id).then(() => {
+            localStorage.removeItem('user');
+            setCurrentUser(null)
+        })
         deleteUserCallback()
         closeModal()
     }
