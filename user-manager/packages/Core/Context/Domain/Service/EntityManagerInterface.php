@@ -9,8 +9,6 @@ interface EntityManagerInterface
     public function flush(): void;
 
     /**
-     * @param callable $func
-     *
      * @return mixed
      */
     public function transactional(callable $func);

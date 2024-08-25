@@ -14,15 +14,11 @@ interface RepositoryReadOnlyInterface
 
     /**
      * @param mixed $id
-     *
-     * @return ResourceInterface|null
      */
     public function find($id): ?ResourceInterface;
 
     /**
      * @param mixed $id
-     *
-     * @return ResourceInterface
      *
      * @throws ResourceByIdNotFoundException
      */
@@ -36,8 +32,6 @@ interface RepositoryReadOnlyInterface
     /**
      * @param mixed[]       $criteria
      * @param string[]|null $orderBy
-     * @param int|null      $limit
-     * @param int|null      $offset
      *
      * @return ResourceInterface[]
      *
@@ -48,13 +42,10 @@ interface RepositoryReadOnlyInterface
     /**
      * @param mixed[]      $criteria
      * @param mixed[]|null $orderBy
-     *
-     * @return ResourceInterface|null
      */
     public function findOneBy(array $criteria, array $orderBy = null): ?ResourceInterface;
 
     /**
-     * @return string
      * @psalm-return class-string<mixed>
      */
     public function getClassName(): string;

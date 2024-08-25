@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace UserManager\Core\Context\Infrastructure\Persistence\Doctrine\Migration;
 
 use Doctrine\DBAL\Migrations\AbortMigrationException;
@@ -12,7 +14,6 @@ use UserManager\Core\Context\Infrastructure\Persistence\Doctrine\Migrations\Abst
 class Version20240823073821 extends AbstractMigration
 {
     /**
-     * @param Schema $schema
      * @throws AbortMigrationException
      */
     public function up(Schema $schema): void
@@ -27,7 +28,6 @@ class Version20240823073821 extends AbstractMigration
     }
 
     /**
-     * @param Schema $schema
      * @throws AbortMigrationException
      */
     public function down(Schema $schema): void

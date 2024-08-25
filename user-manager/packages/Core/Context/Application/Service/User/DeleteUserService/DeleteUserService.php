@@ -49,7 +49,7 @@ class DeleteUserService extends ApplicationService
     {
         /** @var User|null $user */
         $user = $this->security->user();
-        if ($user === null || (!$user->isAdmin() && !$user->ID()->equals($request->userID()))) {
+        if ($user === null || (! $user->isAdmin() && ! $user->ID()->equals($request->userID()))) {
             throw new AuthenticationException('Access denied.');
         }
 

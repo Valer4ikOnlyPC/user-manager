@@ -70,6 +70,9 @@ abstract class DoctrineRepository implements RepositoryInterface
         return $this->class;
     }
 
+    /**
+     * @param mixed $id
+     */
     public function find($id, ?int $lockMode = null, ?int $lockVersion = null): ?ResourceInterface
     {
         /** @var ResourceInterface|null $result */
@@ -79,6 +82,11 @@ abstract class DoctrineRepository implements RepositoryInterface
         return $result;
     }
 
+    /**
+     * @param mixed $id
+     *
+     * @throws ResourceByIdNotFoundException
+     */
     public function findOrFail($id): ResourceInterface
     {
         if (null === $resource = $this->find($id)) {
@@ -88,16 +96,31 @@ abstract class DoctrineRepository implements RepositoryInterface
         return $resource;
     }
 
+    /**
+     * @return ResourceInterface[]
+     */
     public function findAll(): array
     {
         return $this->repository()->findAll();
     }
 
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): array
+    /**
+     * @param mixed[]       $criteria
+     * @param string[]|null $orderBy
+     *
+     * @return ResourceInterface[]
+     *
+     * @throws \UnexpectedValueException
+     */
+    public function findBy(array $criteria, array $orderBy = null, ?int $limit = null, ?int $offset = null): array
     {
         return $this->repository()->findBy($criteria, $orderBy, $limit, $offset);
     }
 
+    /**
+     * @param mixed[]      $criteria
+     * @param mixed[]|null $orderBy
+     */
     public function findOneBy(array $criteria, array $orderBy = null): ?ResourceInterface
     {
         /** @var ResourceInterface|null $result */
@@ -127,17 +150,22 @@ abstract class DoctrineRepository implements RepositoryInterface
         }
     }
 
+    /**
+     * @psalm-return class-string<mixed>
+     */
     abstract public function getClassName(): string;
 
-    /**
-     * @param string      $alias
-     * @param string|null $indexBy
-     */
     public function createQueryBuilder(string $alias, string $indexBy = null): QueryBuilder
     {
         return $this->repository()->createQueryBuilder($alias, $indexBy);
     }
 
+    /**
+     * @param mixed[]  $criteria
+     * @param string[] $sorting
+     *
+     * @return iterable<ResourceInterface>
+     */
     public function createPaginator(array $criteria = [], array $sorting = []): iterable
     {
         $queryBuilder = $this->createQueryBuilder('o');

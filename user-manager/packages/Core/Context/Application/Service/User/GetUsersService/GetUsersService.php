@@ -59,7 +59,7 @@ class GetUsersService extends ApplicationService
             $users = array_map(function (User $user) {
                 return new UserDTO($user);
             }, iterator_to_array($users));
-        } elseif ($user !== null && !$user->isAdmin()) {
+        } elseif ($user !== null && ! $user->isAdmin()) {
             $users[] = new UserDTO($this->userRepository->find($user->ID()));
             $count = 1;
         }
