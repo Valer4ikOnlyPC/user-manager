@@ -20,14 +20,15 @@ export const usersApi = createApi({
         },
     ),
     endpoints: (builder) => ({
-        getUsers: builder.query<GetUsersResponse, { user_name: string|null, page: number, per_page: number }>({
+        getUsers: builder.query<GetUsersResponse, { user_name: string|null, page: number, per_page: number, user_id: string|null }>({
             query: (arg) => ({
                 url: 'list',
                 method: 'POST',
                 body: {
                     "user_name": arg.user_name,
                     "page": arg.page,
-                    "per_page": arg.per_page
+                    "per_page": arg.per_page,
+                    "user_id": arg.user_id
                 },
             }),
             transformErrorResponse: (baseQueryReturnValue: BaseQueryError<any>): string => {

@@ -21,5 +21,15 @@
         <embedded name="name"
                   column-prefix="name_"
                   class="UserManager\Core\Context\Domain\Model\User\UserName\UserName"/>
+        <many-to-many field="photos" target-entity="UserManager\Core\Context\Domain\Model\Photo\Photo">
+            <join-table name="images_users">
+                <join-columns>
+                    <join-column name="user_id" referenced-column-name="id" />
+                </join-columns>
+                <inverse-join-columns>
+                    <join-column name="image_id" referenced-column-name="id" unique="true" />
+                </inverse-join-columns>
+            </join-table>
+        </many-to-many>
     </entity>
 </doctrine-mapping>

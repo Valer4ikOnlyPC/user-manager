@@ -23,4 +23,12 @@
         <default key="_service">UserManager\Core\Context\Application\Service\Security\ApiCreateAccountService\ApiCreateAccountService</default>
         <default key="_request">UserManager\Core\Context\Application\Service\Security\ApiCreateAccountService\Request\ApiCreateAccountRequest</default>
     </route>
+    <route id="v1:photo:upload" path="/api/v1/photo/upload" methods="POST">
+        <default key="_service">UserManager\Core\Context\Application\Service\Photo\UploadPhotosService\UploadPhotosService</default>
+        <default key="_request">UserManager\Core\Context\Application\Service\Photo\UploadPhotosService\Request\UploadPhotosRequest</default>
+    </route>
+    <route id="v1:photo:remove" path="/api/v1/photo/remove" methods="POST">
+        <default key="_service">UserManager\Core\Context\Application\Service\Photo\DeletePhotoService\DeletePhotoService</default>
+        <default key="_request">UserManager\Core\Context\Application\Service\Photo\DeletePhotoService\API\Request\ApiDeletePhotoRequest</default>
+    </route>
 </routes>

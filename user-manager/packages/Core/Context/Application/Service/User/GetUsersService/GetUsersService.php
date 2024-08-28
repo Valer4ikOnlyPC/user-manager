@@ -51,6 +51,11 @@ class GetUsersService extends ApplicationService
         $user = $this->security->user();
         $users = [];
         $count = 0;
+        if ($request->userID() !== null && $user !== null && $user->ID()->equals($request->userID())) {
+            $users[] = new UserDTO($this->userRepository->find($user->ID()));
+            $count = 1;
+            return new GetUsersResponse($users, $count);
+        }
         if ($user !== null && $user->isAdmin()) {
             $users = $this->userRepository->findByParameters($request->userName() !== null ? mb_convert_encoding($request->userName(), 'windows-1251', 'utf-8') : null)
                 ->setMaxPerPage($request->perPage())

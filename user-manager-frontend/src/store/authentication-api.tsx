@@ -31,15 +31,16 @@ export const authenticationApi = createApi({
             },
             invalidatesTags: (result) => [{type: 'authentication', id: 'LIST'}]
         }),
-        createAccount: builder.mutation<AuthenticationResponse, { login: string, password: string, name: IUserName }>({
+        createAccount: builder.mutation<AuthenticationResponse, { login: string, password: string, name: IUserName, tmp_photos_dir: string|null }>({
             query: (arg): any => ({
-                url: 'create-account',
-                method: 'POST',
-                body: {
-                    "login": arg.login,
-                    "password": arg.password,
-                    "name": arg.name
-                }
+                    url: 'create-account',
+                    method: 'POST',
+                    body: {
+                        "login": arg.login,
+                        "password": arg.password,
+                        "name": arg.name,
+                        "tmp_photos_dir": arg.tmp_photos_dir,
+                    }
             }),
             transformErrorResponse: (baseQueryReturnValue: BaseQueryError<any>): string => {
                 return baseQueryReturnValue.data.error.message

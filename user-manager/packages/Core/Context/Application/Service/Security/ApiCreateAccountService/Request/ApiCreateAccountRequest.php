@@ -31,11 +31,19 @@ class ApiCreateAccountRequest implements RequestInterface
      */
     private $name;
 
-    public function __construct(string $login, string $password, UserNameDTO $name)
+    /**
+     * @var ?string
+     * @Serializer\Type("string")
+     * @Serializer\SerializedName("tmp_photos_dir")
+     */
+    private $tmpPhotosDir = null;
+
+    public function __construct(string $login, string $password, UserNameDTO $name, string $tmpPhotosDir)
     {
         $this->setLogin($login);
         $this->setPassword($password);
         $this->setName($name);
+        $this->setTmpPhotosDir($tmpPhotosDir);
     }
 
     public function login(): string
@@ -66,5 +74,15 @@ class ApiCreateAccountRequest implements RequestInterface
     private function setName(UserNameDTO $name): void
     {
         $this->name = $name;
+    }
+
+    public function tmpPhotosDir(): ?string
+    {
+        return $this->tmpPhotosDir;
+    }
+
+    private function setTmpPhotosDir(?string $tmpPhotosDir): void
+    {
+        $this->tmpPhotosDir = $tmpPhotosDir;
     }
 }

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace UserManager\Core\Context\Application\Service\User\DTO;
 
 use JMS\Serializer\Annotation as Serializer;
+use UserManager\Core\Context\Application\Service\Photo\DTO\PhotoDTO;
+use UserManager\Core\Context\Domain\Model\Photo\Photo;
 use UserManager\Core\Context\Domain\Model\User\User;
 use UserManager\Core\Context\Domain\Model\User\UserID;
 use UserManager\Core\Context\Domain\Model\User\UserName\UserName;
@@ -37,6 +39,11 @@ class UserDTO
      */
     private $isAdmin;
 
+    /**
+     * @var PhotoDTO[]
+     */
+    private $photos;
+
     public function __construct(User $user)
     {
         $this->setID($user->ID());
@@ -44,6 +51,7 @@ class UserDTO
         $this->setName($user->name());
         $this->setUpdateDate($user->updateDate());
         $this->setIsAdmin($user->isAdmin());
+        $this->setPhotos($user->photos());
     }
 
     public function ID(): string
@@ -94,5 +102,23 @@ class UserDTO
     private function setIsAdmin(bool $isAdmin): void
     {
         $this->isAdmin = $isAdmin;
+    }
+
+    /**
+     * @return PhotoDTO[]
+     */
+    public function photos(): array
+    {
+        return $this->photos;
+    }
+
+    /**
+     * @param Photo[] $photos
+     */
+    public function setPhotos(array $photos): void
+    {
+        $this->photos = array_map(function (Photo $photo) {
+            return new PhotoDTO($photo);
+        }, $photos);
     }
 }

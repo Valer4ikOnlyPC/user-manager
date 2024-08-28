@@ -13,3 +13,16 @@
 .autofill-bg:-webkit-autofill:active {
   box-shadow: 0 0 0 30px #ffffff inset !important;
 }
+
+.carousel button{
+  visibility: hidden;
+}
+.carousel .carousel-elem{
+  visibility: hidden;
+}
+.carousel:hover button{
+  visibility: visible;
+}
+.carousel:hover .carousel-elem{
+  visibility: visible;
+}

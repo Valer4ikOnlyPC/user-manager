@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace UserManager\Core\Context\Domain\Model\User;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use UserManager\Core\Context\Domain\Model\Photo\Photo;
 use UserManager\Core\Context\Domain\Model\ResourceInterface;
 use UserManager\Core\Context\Domain\Model\Security\UserInterface;
 use UserManager\Core\Context\Domain\Model\User\UserName\UserName;
@@ -40,18 +43,28 @@ class User implements ResourceInterface, UserInterface
      */
     private $isAdmin;
 
+    /**
+     * @var Collection<int|string, Photo>
+     */
+    private $photos;
+
+    /**
+     * @param Photo[] $photos
+     */
     public function __construct(
         UserID $ID,
         string $login,
         string $password,
         UserName $name,
-        bool $isAdmin = false
+        bool $isAdmin = false,
+        array $photos = []
     ) {
         $this->setID($ID);
         $this->setLogin($login);
         $this->setPassword($password);
         $this->setIsAdmin($isAdmin);
         $this->setName($name);
+        $this->setPhotos(...$photos);
         $this->setUpdateDate();
     }
 
@@ -130,5 +143,52 @@ class User implements ResourceInterface, UserInterface
     {
         $this->setIsAdmin($isAdmin);
         $this->setUpdateDate();
+    }
+
+
+    /**
+     * @return Photo[]
+     */
+    public function photos(): array
+    {
+        return $this->photos->toArray();
+    }
+
+    private function setPhotos(Photo ...$photos): void
+    {
+        $this->photos = new ArrayCollection();
+        array_map([$this, 'addPhoto'], $photos);
+    }
+
+    public function addPhoto(Photo $photo): void
+    {
+        if (false === $this->hasPhoto($photo)) {
+            $this->photos->add($photo);
+            $this->setUpdateDate();
+        }
+    }
+
+    public function updatePhotos(Photo ...$photos): void
+    {
+        foreach ($this->photos as $photo) {
+            if (false === in_array($photo, $photos, true)) {
+                $this->removePhoto($photo);
+            }
+        }
+        array_map([$this, 'addPhoto'], $photos);
+        $this->setUpdateDate();
+    }
+
+    public function removePhoto(Photo $photo): void
+    {
+        if (true === $this->hasPhoto($photo)) {
+            $this->photos->removeElement($photo);
+            $this->setUpdateDate();
+        }
+    }
+
+    public function hasPhoto(Photo $photo): bool
+    {
+        return $this->photos->contains($photo);
     }
 }

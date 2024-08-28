@@ -10,6 +10,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use UserManager\Core\Context\Infrastructure\Persistence\Doctrine\Type\Photo\DoctrinePhotoID;
 use UserManager\Core\Context\Infrastructure\Persistence\Doctrine\Type\User\DoctrineUserID;
 use UserManager\CoreBundle\Exception\LogicException;
 
@@ -94,8 +95,9 @@ class CoreExtension extends Extension implements PrependExtensionInterface
         $files = [
             'repo/entity_manager.xml',
             'repo/repo.xml',
-            'service/services_user.xml',
+            'service/service_user.xml',
             'service/service_security.xml',
+            'service/service_photo.xml',
         ];
 
         foreach ($files as $file) {
@@ -110,6 +112,7 @@ class CoreExtension extends Extension implements PrependExtensionInterface
     {
         $types = [
             DoctrineUserID::class,
+            DoctrinePhotoID::class,
         ];
 
         return array_map(

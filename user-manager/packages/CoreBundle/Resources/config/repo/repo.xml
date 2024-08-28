@@ -8,5 +8,10 @@
             <argument type="service"
                       id="doctrine.orm.user_manager_entity_manager"/>
         </service>
+        <service id="user_manager.doctrine.repository.photo"
+                 class="UserManager\Core\Context\Infrastructure\Persistence\Doctrine\Repository\Photo\DoctrinePhotoRepository">
+            <argument type="service"
+                      id="doctrine.orm.user_manager_entity_manager"/>
+        </service>
     </services>
 </container>

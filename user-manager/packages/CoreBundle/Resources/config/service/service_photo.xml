@@ -1,0 +1,43 @@
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services
+           https://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service
+                id="UserManager\Core\Context\Application\Service\Photo\UploadPhotosService\UploadPhotosService"
+                class="UserManager\Core\Context\Application\Service\Photo\UploadPhotosService\UploadPhotosService"
+                public="true">
+            <argument type="service"
+                      id="user_manager.doctrine.repository.user"/>
+            <argument type="service"
+                      id="user_manager.domain.photo.uploader"/>
+        </service>
+        <service id="user_manager.domain.photo.uploader"
+                 class="UserManager\Core\Context\Domain\Service\Photo\Uploader\PhotoUploaderService"
+                 public="true">
+            <argument type="string">%env.user_manager.photo_dir%</argument>
+            <argument type="service"
+                      id="user_manager.doctrine.repository.photo"/>
+            <tag name="user_manager.entity_manager.aware"/>
+        </service>
+        <service id="user_manager.domain.photo.remover"
+                 class="UserManager\Core\Context\Domain\Service\Photo\Remover\PhotoRemoverService"
+                 public="true">
+            <argument type="string">%env.user_manager.photo_dir%</argument>
+            <argument type="service"
+                      id="user_manager.doctrine.repository.photo"/>
+            <tag name="user_manager.entity_manager.aware"/>
+        </service>
+        <service
+                id="UserManager\Core\Context\Application\Service\Photo\DeletePhotoService\DeletePhotoService"
+                class="UserManager\Core\Context\Application\Service\Photo\DeletePhotoService\DeletePhotoService"
+                public="true">
+            <argument type="service"
+                      id="user_manager.doctrine.repository.user"/>
+            <argument type="service"
+                      id="user_manager.domain.security.authentication"/>
+            <argument type="service"
+                      id="user_manager.domain.photo.remover"/>
+        </service>
+    </services>
+</container>

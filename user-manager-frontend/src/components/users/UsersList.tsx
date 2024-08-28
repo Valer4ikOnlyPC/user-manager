@@ -13,7 +13,7 @@ export function UsersList() {
     const [page, setPage] = useState<number>(Number(searchParams.get("page")) ? Number(searchParams.get("page")) : 1)
     const [perPage, setPerPage] = useState<number>(Number(searchParams.get("per-page")) ? Number(searchParams.get("per-page")) : 50)
     const [userName, setUserLogin] = useState<string>(searchParams.get("user-name") ? String(searchParams.get("user-name")) : '')
-    const {data: response, isLoading, error} = useGetUsersQuery({user_name: (userName === '' ? null : userName), page: page, per_page: perPage})
+    const {data: response, isLoading, error} = useGetUsersQuery({user_name: (userName === '' ? null : userName), page: page, per_page: perPage, user_id: null})
 
     useEffect(() => {
         setPage(Number(searchParams.get("page")) ? Number(searchParams.get("page")) : 1)
@@ -44,6 +44,12 @@ export function UsersList() {
         setSelectedUser(selectedUser)
         setModal(true)
     }
+    useEffect(() => {
+        if (isModal && selectedUser && response) {
+            let updatedUser = response.users.find((user) => user.id === selectedUser.id)
+            setSelectedUser(updatedUser ? updatedUser : selectedUser)
+        }
+    }, [response]);
 
     const menuLoadingHandler = (value: boolean) => {
         setMenuLoading(value)

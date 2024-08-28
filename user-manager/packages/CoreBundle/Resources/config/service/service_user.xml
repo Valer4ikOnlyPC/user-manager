@@ -18,6 +18,9 @@
                       id="user_manager.doctrine.repository.user"/>
             <argument type="service"
                       id="user_manager.domain.security.authentication"/>
+            <argument type="service"
+                      id="user_manager.domain.photo.remover"/>
+            <tag name="user_manager.entity_manager.aware"/>
         </service>
         <service
                 id="UserManager\Core\Context\Application\Service\User\UpdateUserService\UpdateUserService"

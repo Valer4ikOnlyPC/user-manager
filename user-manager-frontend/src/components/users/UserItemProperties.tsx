@@ -1,9 +1,13 @@
 import React, {useContext, useEffect, useState} from "react";
-import {IUser, IUserName} from "../../models";
+import {IPhoto, IUser, IUserName} from "../../models";
 import {useDeleteUserMutation, useUpdateUserMutation} from "../../store/users-api";
 import {Error} from "../Error";
 import {AuthenticationResponse} from "../../store/authentication-api";
 import AuthContext from "../../context/AuthContext";
+import {PhotosCarousel} from "../photos/PhotosCarousel";
+import {UploadPhotoList} from "../photos/UploadPhotoList";
+import {filesToBase64} from "../../store/functions";
+import {useUploadPhotosMutation} from "../../store/photo-api";
 
 export interface UserItemPropertiesProps {
     user: IUser
@@ -15,6 +19,7 @@ export interface UserItemPropertiesProps {
 export function UserItemProperties({user, deleteUser: deleteUserCallback, loading, closeModal}: UserItemPropertiesProps) {
     const [deleteUser, {isLoading: isDeleting, error: deleteError}] = useDeleteUserMutation()
     const [updateUser, {data, isLoading: isUpdating, error: updateError}] = useUpdateUserMutation()
+    const [uploadPhotos, {isLoading: isPhotoSending, error: photoError}] = useUploadPhotosMutation();
 
     const [error, setError] = useState('');
     const [isSuccessfully, setSuccessfully] = useState<boolean>(false)
@@ -40,10 +45,11 @@ export function UserItemProperties({user, deleteUser: deleteUserCallback, loadin
     useEffect(() => {
         setError(JSON.stringify(deleteError) !== '' ? JSON.stringify(deleteError) : error)
         setError(JSON.stringify(updateError) !== '' ? JSON.stringify(updateError) : error)
-    }, [deleteError, updateError]);
+        setError(JSON.stringify(photoError) !== '' ? JSON.stringify(photoError) : error)
+    }, [deleteError, updateError, photoError]);
     useEffect(() => {
-        loading(isDeleting || isUpdating)
-    }, [isDeleting, isUpdating]);
+        loading(isDeleting || isUpdating || isPhotoSending)
+    }, [isDeleting, isUpdating, isPhotoSending]);
     useEffect(() => {
         setSuccessfully(false)
     }, [isDeleting, isUpdating, user.id])
@@ -97,12 +103,38 @@ export function UserItemProperties({user, deleteUser: deleteUserCallback, loadin
         return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
     }
 
+    const photosHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setError('')
+        setAlert(false)
+        if (!e.target.files) return;
+        if (e.target.files.length > 10) {
+            setError('Максимальное кол-во файлов - 10')
+            setAlert(true)
+            return;
+        }
+        let photos: File[] = [];
+        for (let i = 0; e.target.files.length > i; i++) {
+            let photo = e.target.files.item(i);
+            if (photo) photos.push(photo);
+        }
+        handlePhotos(photos);
+    }
+
+    const handlePhotos =  async (photos: File[]) => {
+        try {
+            const photosBase64 = await filesToBase64(photos);
+            const response = await uploadPhotos({photosBase64: photosBase64, user_id: user.id}).unwrap();
+        } catch (error) {
+            setError(JSON.stringify(error))
+        }
+    };
+
     return (
         <div
             className="px-4 pt-2 relative pb-1 mb-1 h-full bg-white overflow-hidden">
             <div className={'absolute top-0 bottom-0'}>
                 <span
-                    className={"bg-white flex items-center text-black p-3 z-10 break-words rounded drop-shadow-lg sticky top-5 w-full transition-opacity " + (isAlert ? 'visible' : 'hidden')}>
+                    className={"bg-white flex items-center text-black p-3 z-50 break-words rounded drop-shadow-lg sticky top-5 w-full transition-opacity " + (isAlert ? 'visible' : 'hidden')}>
                     <div className={'w-full break-words'}>
                         {isSuccessfully &&
                             <p className={'text-center text-green-500'}>Пользователь успешно обновлён.</p>}
@@ -124,9 +156,12 @@ export function UserItemProperties({user, deleteUser: deleteUserCallback, loadin
                 </span>
             </div>
             <div className={'relative mb-4'}>
+                <PhotosCarousel photos={user.photos} isMini={false}/>
+            </div>
+            <div className={'relative mb-4'}>
                 <div className={"mb-2 flex justify-between items-center"}>
                     <label htmlFor="url-shortener" className={"text-sm font-bold text-gray-700 block"}>ID
-                        правила</label>
+                        пользователя</label>
                 </div>
                 <div className={"flex items-center"}>
                     <div className={"relative w-full"}>
@@ -200,6 +235,18 @@ export function UserItemProperties({user, deleteUser: deleteUserCallback, loadin
                 </div>
                 <label htmlFor="isAdmin"
                        className="ms-2 text-sm font-medium select-none text-gray-900">Администратор</label>
+            </div>
+            <div className={'mb-3 relative'}>
+                <label htmlFor="photos"
+                       className="block text-sm font-medium leading-6 text-gray-900 break-words">Фото</label>
+                <div className="mt-2 border rounded-md bg-gray-50">
+                    <input
+                        className="block w-full py-1.5 px-2.5 text-sm text-gray-900 rounded-lg cursor-pointer"
+                        id="photos" name="photos" type="file" multiple={true}
+                        accept="image/png, image/jpeg"
+                        onChange={photosHandler}/>
+                    <UploadPhotoList photos={user.photos} isDelete={true} user={user}/>
+                </div>
             </div>
             <div className={'mt-2 relative mb-5 text-end text-gray-600'}>
                 <p>Дата обновления: <b>{(new Date(user.update_date)).toLocaleDateString()}</b></p>

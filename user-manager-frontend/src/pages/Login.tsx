@@ -2,7 +2,10 @@ import React, {useEffect, useState} from "react";
 import {useAuthenticationMutation, useCreateAccountMutation} from "../store/authentication-api";
 import {Loader} from "../components/Loader";
 import {Error} from "../components/Error";
-import {IUserName} from "../models";
+import {IPhoto, IUserName} from "../models";
+import {useUploadPhotosMutation} from "../store/photo-api";
+import {filesToBase64} from "../store/functions";
+import {UploadPhotoList} from "../components/photos/UploadPhotoList";
 export function Login() {
     const [login, setLogin] = useState<string>('');
     const [firstName, setFirstName] = useState<string>('');
@@ -11,13 +14,16 @@ export function Login() {
     const [password, setPassword] = useState<string>('');
     const [authentication, {isLoading, error}] = useAuthenticationMutation();
     const [createAccount, {isLoading: isCreating, error: createError}] = useCreateAccountMutation();
+    const [uploadPhotos, {isLoading: isPhotoSending, error: photoError}] = useUploadPhotosMutation();
+    const [uploadPhotosDirectory, setUploadPhotosDirectory] = useState<string|null>(null);
+    const [uploadedPhotos, setUploadedPhotos] = useState<IPhoto[]>([]);
     const sendForm = async (event: React.FormEvent) => {
         event.preventDefault()
         try {
             setShowError('')
             const response = isLogin ? await authentication({login, password}).unwrap() :
                 await createAccount({login: login, password: password, name:
-                        {first_name: firstName, second_name: secondName, last_name: lastName === '' ? null : lastName} as IUserName }).unwrap();
+                        {first_name: firstName, second_name: secondName, last_name: lastName === '' ? null : lastName} as IUserName, tmp_photos_dir: uploadPhotosDirectory }).unwrap();
             const token = response.token;
             if (token) {
                 localStorage.setItem('user', JSON.stringify(response));
@@ -33,13 +39,41 @@ export function Login() {
     const [showError, setShowError] = useState('');
     const [isLogin, setIsLogin] = useState<boolean>(true);
     useEffect(() => {
-        setAlert(!!(error || createError));
-    }, [error, createError]);
+        setAlert(!!(error || createError || photoError));
+    }, [error, createError, photoError]);
     const validation = (e: React.ChangeEvent<HTMLInputElement>): string => {
         let text = e.target.value.replace(/[^a-zA-Z-а-яА-Я.]/g, '');
         return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
     }
     const validationLogin = (e: React.ChangeEvent<HTMLInputElement>): string => e.target.value.replace(/[^a-zA-Z-а-яА-Я-0-9-@-_.]/g, '');
+
+    const photosHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setShowError('')
+        setAlert(false)
+        if (!e.target.files) return;
+        if (e.target.files.length > 10) {
+            setShowError('Максимальное кол-во файлов - 10')
+            setAlert(true)
+            return;
+        }
+        let photos: File[] = [];
+        for (let i = 0; e.target.files.length > i; i++) {
+            let photo = e.target.files.item(i);
+            if (photo) photos.push(photo);
+        }
+        handlePhotos(photos);
+    }
+
+    const handlePhotos =  async (photos: File[]) => {
+        try {
+            const photosBase64 = await filesToBase64(photos);
+            const response = await uploadPhotos({photosBase64: photosBase64, user_id: null}).unwrap();
+            setUploadPhotosDirectory(response.result.user_id);
+            setUploadedPhotos(response.result.photos);
+        } catch (error) {
+            setShowError(JSON.stringify(error))
+        }
+    };
 
     return (
         <>
@@ -138,11 +172,23 @@ export function Login() {
                                                            className="block w-full rounded-md border-0 py-1.5 px-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
                                                 </div>
                                             </div>
+                                            <div className={'mb-3 relative'}>
+                                                <label htmlFor="photos"
+                                                       className="block text-sm font-medium leading-6 text-gray-900 break-words">Фото</label>
+                                                <div className="mt-2 border rounded-md bg-gray-50">
+                                                    <input
+                                                        className="block w-full py-1.5 px-2.5 text-sm text-gray-900 rounded-lg cursor-pointer"
+                                                        id="photos" name="photos" type="file" multiple={true}
+                                                        accept="image/png, image/jpeg"
+                                                        onChange={photosHandler}/>
+                                                    <UploadPhotoList photos={uploadedPhotos} isDelete={false} user={null}/>
+                                                </div>
+                                            </div>
                                         </>
                                     }
                                     <div className={'mb-2 relative'}>
-                                        <button type="submit"
-                                                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
+                                    <button type="submit" disabled={isPhotoSending}
+                                                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm disabled:hover:bg-indigo-600 hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
                                         focus-visible:outline-indigo-600 break-words">{isLogin ? "Войти" : "Зарегистрироваться"}
                                         </button>
                                     </div>

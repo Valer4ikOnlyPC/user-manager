@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace UserManager\Core\Context\Application\Service\User\GetUsersService\Request;
 
+use JMS\Serializer\Annotation\Accessor;
 use JMS\Serializer\Annotation as Serializer;
 use UserManager\Core\Context\Application\Service\RequestInterface;
+use UserManager\Core\Context\Domain\Model\User\UserID;
 
 class GetUsersRequest implements RequestInterface
 {
@@ -15,6 +17,14 @@ class GetUsersRequest implements RequestInterface
      * @Serializer\SerializedName("user_name")
      */
     private $userName;
+
+    /**
+     * @var ?UserID
+     * @Serializer\Type("string")
+     * @Serializer\SerializedName("user_id")
+     * @Accessor(setter="setUserID")
+     */
+    private $userID = null;
 
     /**
      * @var int
@@ -33,11 +43,13 @@ class GetUsersRequest implements RequestInterface
     public function __construct(
         int $page,
         int $perPage,
-        ?string $userName = null
+        ?string $userName = null,
+        ?string $userID = null
     ) {
         $this->setUserName($userName);
         $this->setPage($page);
         $this->setPerPage($perPage);
+        $this->setUserID($userID);
     }
 
     public function userName(): ?string
@@ -68,5 +80,15 @@ class GetUsersRequest implements RequestInterface
     private function setPage(int $page): void
     {
         $this->page = $page;
+    }
+
+    public function userID(): ?UserID
+    {
+        return $this->userID;
+    }
+
+    public function setUserID(?string $userID): void
+    {
+        $this->userID = $userID !== null ? new UserID($userID) : null;
     }
 }

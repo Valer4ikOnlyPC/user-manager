@@ -4,6 +4,7 @@ import {HomePage} from "./pages/HomePage";
 import {NotFoundPage} from "./pages/NotFoundPage";
 import AuthContext from "./context/AuthContext";
 import {UsersPage} from "./pages/UsersPage";
+import {UserProfilePage} from "./pages/UserProfilePage";
 
 function App() {
     const { currentUser, setCurrentUser } = useContext(AuthContext);
@@ -52,9 +53,9 @@ function App() {
                   </div>
               </div>
           </nav>
-          <div className={'w-full mt-20 md:w-auto'}>
+          <div className={'w-full mt-20 md:w-[1000px]'}>
               <Routes>
-                  <Route path={'/'} element={<HomePage/>}/>
+                  <Route path={'/'} element={<UserProfilePage/>}/>
                   <Route path={'/users'} element={<UsersPage/>}/>
                   <Route path={'/*'} element={<NotFoundPage/>}/>
               </Routes>

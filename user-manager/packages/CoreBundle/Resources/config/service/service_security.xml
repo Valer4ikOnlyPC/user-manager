@@ -72,6 +72,8 @@
                       id="user_manager.doctrine.repository.user"/>
             <argument type="service"
                       id="user_manager.domain.security.web_token.web_token_builder"/>
+            <argument type="service"
+                      id="user_manager.domain.photo.uploader"/>
         </service>
     </services>
 </container>

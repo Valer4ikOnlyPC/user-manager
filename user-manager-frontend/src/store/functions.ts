@@ -16,3 +16,22 @@ export const responseHandler = (response: Response) => {
     }
     return response.json()
 }
+
+const toBase64 = (file: File) => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+});
+
+export const filesToBase64 = async (files: File[]) => {
+    let result: string[] = [];
+    try {
+        for (const file of files) {
+            result.push((await toBase64(file)) as string);
+        }
+    } catch(error) {
+        return [] as string[];
+    }
+    return result
+}

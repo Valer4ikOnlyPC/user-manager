@@ -16,6 +16,7 @@ use UserManager\Core\Context\Domain\Model\User\User;
 use UserManager\Core\Context\Domain\Model\User\UserID;
 use UserManager\Core\Context\Domain\Model\User\UserName\UserName;
 use UserManager\Core\Context\Domain\Model\User\UserRepositoryInterface;
+use UserManager\Core\Context\Domain\Service\Photo\Uploader\PhotoUploaderInterface;
 
 /**
  * @method ApiCreateAccountResponse execute(ApiCreateAccountRequest $request);
@@ -32,10 +33,19 @@ class ApiCreateAccountService extends ApplicationService
      */
     private $tokenBuilder;
 
-    public function __construct(UserRepositoryInterface $userRepository, TokenBuilderInterface $tokenBuilder)
-    {
+    /**
+     * @var PhotoUploaderInterface
+     */
+    private $photoUploader;
+
+    public function __construct(
+        UserRepositoryInterface $userRepository,
+        TokenBuilderInterface $tokenBuilder,
+        PhotoUploaderInterface $photoUploader
+    ) {
         $this->userRepository = $userRepository;
         $this->tokenBuilder = $tokenBuilder;
+        $this->photoUploader = $photoUploader;
     }
 
     protected function supports(RequestInterface $request): bool
@@ -68,6 +78,9 @@ class ApiCreateAccountService extends ApplicationService
             )
         );
         $this->userRepository->add($user);
+        if ($request->tmpPhotosDir() !== null) {
+            $this->photoUploader->addPhotosToUserAndTransfer($request->tmpPhotosDir(), $user);
+        }
 
         return new ApiCreateAccountResponse($this->tokenBuilder->createToken($user), new UserDTO($user));
     }

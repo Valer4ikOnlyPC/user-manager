@@ -11,5 +11,6 @@
         <parameter key="env.user_manager.db_driver" type="constant">ENV_CORE_DB_DRIVER</parameter>
         <parameter key="env.user_manager.db_server_version" type="constant">ENV_CORE_DB_SERVER_VERSION</parameter>
         <parameter key="env.user_manager.security.secret_token" type="constant">ENV_CORE_SECRET_WEB_TOKEN</parameter>
+        <parameter key="env.user_manager.photo_dir" type="constant">ENV_CORE_PHOTO_DIR</parameter>
     </parameters>
 </container>
