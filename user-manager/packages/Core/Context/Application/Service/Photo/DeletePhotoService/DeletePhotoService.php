@@ -6,10 +6,10 @@ namespace UserManager\Core\Context\Application\Service\Photo\DeletePhotoService;
 
 use UserManager\Core\Common\Exception\AuthenticationException;
 use UserManager\Core\Context\Application\Service\ApplicationService;
-use UserManager\Core\Context\Application\Service\RequestInterface;
-use UserManager\Core\Context\Application\Service\ResponseInterface;
 use UserManager\Core\Context\Application\Service\Photo\DeletePhotoService\Request\DeletePhotoRequest;
 use UserManager\Core\Context\Application\Service\Photo\DeletePhotoService\Response\DeletePhotoResponse;
+use UserManager\Core\Context\Application\Service\RequestInterface;
+use UserManager\Core\Context\Application\Service\ResponseInterface;
 use UserManager\Core\Context\Domain\Model\Security\Authentication\SecurityInterface;
 use UserManager\Core\Context\Domain\Model\User\User;
 use UserManager\Core\Context\Domain\Model\User\UserRepositoryInterface;

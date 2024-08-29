@@ -145,7 +145,6 @@ class User implements ResourceInterface, UserInterface
         $this->setUpdateDate();
     }
 
-
     /**
      * @return Photo[]
      */

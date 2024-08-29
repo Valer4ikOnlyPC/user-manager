@@ -9,8 +9,8 @@ use UserManager\Core\Context\Domain\Model\Photo\PhotoID;
 use UserManager\Core\Context\Domain\Model\Photo\PhotoRepositoryInterface;
 use UserManager\Core\Context\Domain\Model\User\User;
 use UserManager\Core\Context\Domain\Model\User\UserID;
-use UserManager\Core\Context\Domain\Service\Photo\DTO\UploadPhotosDirectoryDTO;
 use UserManager\Core\Context\Domain\Service\EntityManagerAwareTrait;
+use UserManager\Core\Context\Domain\Service\Photo\DTO\UploadPhotosDirectoryDTO;
 
 class PhotoUploaderService implements PhotoUploaderInterface
 {
@@ -41,17 +41,17 @@ class PhotoUploaderService implements PhotoUploaderInterface
         $isTmp = $user === null;
         $userID = $isTmp ? new UserID() : $user->ID();
         $dir = $isTmp ? sprintf('tmp/%s', $userID) : $userID;
-        if (!is_dir(sprintf('%s/%s', $this->photoPath, $dir))) {
+        if (! is_dir(sprintf('%s/%s', $this->photoPath, $dir))) {
             mkdir(sprintf('%s/%s', $this->photoPath, $dir), 0777, true);
         }
 
         $photos = [];
         foreach ($images as $imageContent) {
-            if (!$isTmp && (count($images) + count($user->photos()) > 10)) {
+            if (! $isTmp && (count($images) + count($user->photos()) > 10)) {
                 throw new \Exception("Maximum number of photos exceeded");
             }
             $fileExtension = (explode('/', (explode(';base64,', $imageContent))[0]))[1];
-            if (!in_array($fileExtension, ['jpg', 'jpeg', 'png'])) {
+            if (! in_array($fileExtension, ['jpg', 'jpeg', 'png'], false)) {
                 throw new \Exception("File extension '{$fileExtension}' is not allowed");
             }
             $fileID = new PhotoID();
@@ -64,7 +64,7 @@ class PhotoUploaderService implements PhotoUploaderInterface
                 sprintf('/photos/%s/%s.%s', $dir, $fileID, $fileExtension)
             );
         }
-        if (!$isTmp) {
+        if (! $isTmp) {
             $this->addUserPhotos($user, $photos);
         }
 
@@ -76,13 +76,13 @@ class PhotoUploaderService implements PhotoUploaderInterface
         $tempDir = sprintf('%s/tmp/%s', $this->photoPath, $tmpDirID);
         $tempFiles = scandir($tempDir);
         $fileDir = sprintf('%s/%s', $this->photoPath, $user->ID());
-        if (!is_dir($fileDir)) {
+        if (! is_dir($fileDir)) {
             mkdir($fileDir, 0777, true);
         }
 
         $photos = [];
-        foreach($tempFiles as $file){
-            if($file != '.' && $file != '..') {
+        foreach ($tempFiles as $file) {
+            if ($file !== '.' && $file !== '..') {
                 $photos[] = new Photo(
                     new PhotoID((explode('.', $file))[0]),
                     sprintf('%s/%s', $fileDir, $file),

@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace UserManager\Core\Context\Application\Service\Photo\UploadPhotosService;
 
 use UserManager\Core\Context\Application\Service\ApplicationService;
-use UserManager\Core\Context\Application\Service\RequestInterface;
-use UserManager\Core\Context\Application\Service\ResponseInterface;
 use UserManager\Core\Context\Application\Service\Photo\UploadPhotosService\Request\UploadPhotosRequest;
 use UserManager\Core\Context\Application\Service\Photo\UploadPhotosService\Response\UploadPhotosResponse;
+use UserManager\Core\Context\Application\Service\RequestInterface;
+use UserManager\Core\Context\Application\Service\ResponseInterface;
 use UserManager\Core\Context\Domain\Model\User\UserRepositoryInterface;
 use UserManager\Core\Context\Domain\Service\Photo\Uploader\PhotoUploaderInterface;
 
@@ -32,7 +32,6 @@ class UploadPhotosService extends ApplicationService
         $this->userRepository = $userRepository;
         $this->photoUploader = $photoUploader;
     }
-
 
     protected function supports(RequestInterface $request): bool
     {
