@@ -3,13 +3,18 @@
 ### Развертывание
 
 Конфиг докер окружения
-
-указываем свой USER_NAME и ip в PHP_CLI_XDEBUG_HOST
+<br>
+указываем свой ```USER_NAME``` и ip в ```PHP_CLI_XDEBUG_HOST```
 ```shell
 cp .env.default .env
 ```
 ```shell
 cp evo/.env.dist evo/.env
+```
+
+Конфиг nginx
+```shell
+cp docker/etc/web/conf.d/default.conf.dist docker/etc/web/conf.d/default.conf
 ```
 
 Устанавливаем зависимости composer
@@ -32,8 +37,22 @@ make migrate
 ```shell
 sudo nano /etc/hosts
 ```
+<br>
 
-Установить зависимости для react проекта и сбилдить его
+### Фронтенд
+#### Установить зависимости для react проекта и сбилдить его.
+
+Если в ```default.conf``` выбрана конфигурация для dev - ```npm start```, для prod - ```npm run build```.
+<br>
+Для dev - после, в фале ```default.conf```, в строке ```proxy_pass``` указываем порт на котором запустился проект
+
+
+dev:
+```shell
+cd user-manager-frontend && npm i && npm start
+```
+
+prod:
 ```shell
 cd user-manager-frontend && npm i && npm run build
 ```
@@ -42,5 +61,5 @@ cd user-manager-frontend && npm i && npm run build
 #### (только пользователь с правами администратора может выдавать права администратора)
 
 Логин ```admin```
-
+<br>
 Пароль ```admin```

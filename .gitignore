@@ -9,3 +9,5 @@
 /*.idea
 .env
 .phpunit.result.cache
+
+/docker/etc/web/conf.d/default.conf
